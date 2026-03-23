@@ -250,7 +250,7 @@ export default function App() {
               ].map(([k, label, hint, path]) => (
                 <div key={k}>
                   <Row label={label} hint={hint} badge={results[k] ? <Badge ok={results[k].ok}/> : null} onQuery={() => consultar(k, path, { page: 0, page_size: 5 })}
-} loading={loading[k]}/>
+loading={loading[k]}/>
                   <Result data={results[k]?.data}/>
                 </div>
               ))}
