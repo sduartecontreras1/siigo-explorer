@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
   const headers = {
   "Content-Type": "application/json",
-  "Partner-Id": "siigoapi"
+  "Partner-Id": "JASAsesores"
 };
   if (req.headers.authorization) headers["Authorization"] = req.headers.authorization;
 
