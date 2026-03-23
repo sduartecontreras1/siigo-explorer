@@ -249,7 +249,13 @@ export default function App() {
                 ["journals", "Comprobantes de diario", "Ajustes, causaciones manuales, cierres", "v1/journals"],
               ].map(([k, label, hint, path]) => (
                 <div key={k}>
-                  <Row label={label} hint={hint} badge={results[k] ? <Badge ok={results[k].ok}/> : null} onQuery={() => consultar(k, path, filtros())}
+                  <Row label={label} hint={hint} badge={results[k] ? <Badge ok={results[k].ok}/> : null} onQuery={() => consultar(k, path,
+  k === "invoices"
+    ? { page: 0, page_size: 25, date_start: fechas.inicio, date_end: fechas.fin }
+    : k === "journals"
+    ? { page: 0, page_size: 25 }
+    : { page: 0, page_size: 25, created_start: fechas.inicio, created_end: fechas.fin }
+)}
 loading={loading[k]}/>
                   <Result data={results[k]?.data}/>
                 </div>
