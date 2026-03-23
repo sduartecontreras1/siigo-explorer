@@ -255,7 +255,7 @@ export default function App() {
                 ["purchases", "Facturas de compra", "Verifica procesamiento del periodo en Siigo", "v1/purchases"],
                 ["invoices", "Facturas de venta", "Facturas emitidas en el periodo", "v1/invoices"],
                 ["receipts", "Recibos de caja", "Validación contra extractos bancarios", "v1/vouchers"],
-                ["journals", "Comprobantes de diario", "Ajustes, causaciones manuales, cierres", "v1/journals"],
+                ["journals", "Comprobantes de diario", "Ajustes, causaciones manuales, cierres", "v1/journal-entries"],
               ].map(([k, label, hint, path]) => (
                 <div key={k}>
                   <Row label={label} hint={hint} badge={results[k] ? <Badge ok={results[k].ok}/> : null} onQuery={() => consultar(k, path, filtros())} loading={loading[k]}/>
