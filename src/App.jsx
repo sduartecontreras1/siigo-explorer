@@ -170,19 +170,10 @@ export default function App() {
   }
 
   function filtros() {
-  const inputs = document.querySelectorAll('input[type="date"]');
-
-  const fechaInicio = inputs[0]?.value;
-  const fechaFin = inputs[1]?.value;
-
-  console.log("DEBUG fechas:", { fechaInicio, fechaFin });
-
-  return {
-    page: 0,
-    page_size: 25,
-    date_start: fechaInicio,
-    date_end: fechaFin
-  };
+  const p = { page: 0, page_size: 25 };
+  if (fechas.inicio) p.created_start = fechas.inicio;
+  if (fechas.fin) p.created_end = fechas.fin;
+  return p;
 }
   return (
     <div style={{ minHeight: "100vh", background: C.bgPage, fontFamily: "'Nunito',sans-serif", fontWeight: 300, padding: "0 1rem 4rem" }}>
@@ -255,7 +246,7 @@ export default function App() {
                 ["purchases", "Facturas de compra", "Verifica procesamiento del periodo en Siigo", "v1/purchases"],
                 ["invoices", "Facturas de venta", "Facturas emitidas en el periodo", "v1/invoices"],
                 ["receipts", "Recibos de caja", "Validación contra extractos bancarios", "v1/vouchers"],
-                ["journals", "Comprobantes de diario", "Ajustes, causaciones manuales, cierres", "v1/journal-entries"],
+                ["journals", "Comprobantes de diario", "Ajustes, causaciones manuales, cierres", "v1/journals"],
               ].map(([k, label, hint, path]) => (
                 <div key={k}>
                   <Row label={label} hint={hint} badge={results[k] ? <Badge ok={results[k].ok}/> : null} onQuery={() =>
