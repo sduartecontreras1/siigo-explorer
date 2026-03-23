@@ -230,7 +230,7 @@ export default function App() {
 
             <Card title="Catálogos base" subtitle="Configuración del sistema">
               {[
-                ["doc_types", "Tipos de comprobante", "Lista todos los comprobantes (FV, RCB, CE...)", "v1/document-types", null],
+                ["doc_types", "Tipos de comprobante", "Lista todos los comprobantes (FV, RCB, CE...)", "v1/document-types", { type: "FV" }],
                 ["users", "Usuarios del sistema", "Usuarios registrados en Siigo", "v1/users", null],
                 ["taxes", "Impuestos configurados", "Retenciones, IVA, ICA", "v1/taxes", null],
                 ["payment_types", "Formas de pago", "Medios de pago disponibles", "v1/payment-types", null],
