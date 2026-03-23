@@ -257,17 +257,31 @@ export default function App() {
             </Card>
 
             <Card title="Nómina y terceros">
-              {[
-                ["employees", "Empleados", "Lista de empleados registrados", "v1/employees", { page: 0, page_size: 25 }],
-                ["customers", "Clientes / proveedores", "Terceros registrados en Siigo", "v1/customers", { page: 0, page_size: 25 }],
-                ["products", "Productos / inventario", "Para conciliación vs Kardex", "v1/products", { page: 0, page_size: 25 }],
-              ].map(([k, label, hint, path, params]) => (
-                <div key={k}>
-                  <Row label={label} hint={hint} badge={results[k] ? <Badge ok={results[k].ok}/> : null} onQuery={() => consultar(k, path, params)} loading={loading[k]}/>
-                  <Result data={results[k]?.data}/>
-                </div>
-              ))}
-            </Card>
+  {[
+    ["employees", "Empleados", "Lista de empleados registrados", "v1/employees", { page: 0, page_size: 25 }],
+    ["customers", "Clientes / proveedores", "Terceros registrados en Siigo", "v1/customers", null],
+    ["products", "Productos / inventario", "Para conciliación vs Kardex", "v1/products", { page: 0, page_size: 25 }],
+  ].map(([k, label, hint, path, params]) => (
+    <div key={k}>
+      <Row
+        label={label}
+        hint={hint}
+        badge={results[k] ? <Badge ok={results[k].ok}/> : null}
+        onQuery={() =>
+          consultar(
+            k,
+            path,
+            ["customers", "invoices", "purchases", "receipts", "journals"].includes(k)
+              ? filtros()
+              : params
+          )
+        }
+        loading={loading[k]}
+      />
+      <Result data={results[k]?.data}/>
+    </div>
+  ))}
+</Card>
 
             {Object.keys(results).length > 0 && (
               <div style={{ padding: 16, background: C.bgLight, border: `1px solid ${C.border}`, borderRadius: 12, marginTop: 8 }}>
