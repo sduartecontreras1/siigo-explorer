@@ -244,7 +244,7 @@ export default function App() {
 
             <Card title="Facturas y comprobantes" subtitle="Clave para el checklist">
               {[
-                ["purchases", "Facturas de compra", "Verifica procesamiento del periodo en Siigo", "v1/purchase-invoices"],
+                ["purchases", "Facturas de compra", "Verifica procesamiento del periodo en Siigo", "v1/purchases"],
                 ["invoices", "Facturas de venta", "Facturas emitidas en el periodo", "v1/invoices"],
                 ["receipts", "Recibos de caja", "Validación contra extractos bancarios", "v1/receipts"],
                 ["journals", "Comprobantes de diario", "Ajustes, causaciones manuales, cierres", "v1/journals"],
