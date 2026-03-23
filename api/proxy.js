@@ -9,7 +9,10 @@ export default async function handler(req, res) {
   const qs = new URLSearchParams(params).toString();
   const url = qs ? `https://api.siigo.com/${endpoint}?${qs}` : `https://api.siigo.com/${endpoint}`;
 
-  const headers = { "Content-Type": "application/json" };
+  const headers = {
+  "Content-Type": "application/json",
+  "Partner-Id": "jas-explorer"
+};
   if (req.headers.authorization) headers["Authorization"] = req.headers.authorization;
 
   let bodyToSend = undefined;
