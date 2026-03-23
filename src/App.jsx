@@ -121,7 +121,7 @@ export default function App() {
     setAuthMsg(null);
 
     try {
-      const r = await siigo("POST", "v1/auth", null, {
+      const r = await siigo("POST", "auth", null, {
         username: creds.username,
         access_key: creds.access_key
       });
