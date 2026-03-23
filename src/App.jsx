@@ -258,7 +258,7 @@ export default function App() {
 
             <Card title="Nómina y terceros">
   {[
-    ["employees", "Empleados", "Lista de empleados registrados", "v1/employees", { page: 0, page_size: 25 }],
+    //["employees", "Empleados", "Lista de empleados registrados", "v1/employees", { page: 0, page_size: 25 }],
     ["customers", "Clientes / proveedores", "Terceros registrados en Siigo", "v1/customers", null],
     ["products", "Productos / inventario", "Para conciliación vs Kardex", "v1/products", { page: 0, page_size: 25 }],
   ].map(([k, label, hint, path, params]) => (
