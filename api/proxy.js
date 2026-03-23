@@ -12,13 +12,33 @@ export default async function handler(req, res) {
   const headers = { "Content-Type": "application/json" };
   if (req.headers.authorization) headers["Authorization"] = req.headers.authorization;
 
+  let bodyToSend = undefined;
+  if (req.method === "POST") {
+    bodyToSend = typeof req.body === "string" ? req.body : JSON.stringify(req.body);
+  }
+
   try {
     const r = await fetch(url, {
-      method: req.method, headers,
-      ...(req.method === "POST" && req.body ? { body: JSON.stringify(req.body) } : {}),
+      method: req.method,
+      headers,
+      ...(bodyToSend ? { body: bodyToSend } : {}),
     });
-    const data = await r.json();
-    return res.status(r.status).json(data);
+
+    const responseText = await r.text();
+    let data;
+    try { data = JSON.parse(responseText); }
+    catch { data = { raw: responseText }; }
+
+    return res.status(r.status).json({
+      ...data,
+      _debug: {
+        url_called: url,
+        method: req.method,
+        status: r.status,
+        body_sent: bodyToSend ? JSON.parse(bodyToSend) : null,
+        response_headers: Object.fromEntries(r.headers.entries())
+      }
+    });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
