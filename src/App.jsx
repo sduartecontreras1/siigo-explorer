@@ -170,14 +170,20 @@ export default function App() {
   }
 
   function filtros() {
+  const inputs = document.querySelectorAll('input[type="date"]');
+
+  const fechaInicio = inputs[0]?.value;
+  const fechaFin = inputs[1]?.value;
+
+  console.log("DEBUG fechas:", { fechaInicio, fechaFin });
+
   return {
     page: 0,
     page_size: 25,
-    date_start: fechaInicio,   // 🔴 antes era created_start
-    date_end: fechaFin         // 🔴 antes era created_end
+    date_start: fechaInicio,
+    date_end: fechaFin
   };
 }
-
   return (
     <div style={{ minHeight: "100vh", background: C.bgPage, fontFamily: "'Nunito',sans-serif", fontWeight: 300, padding: "0 1rem 4rem" }}>
       <div style={{ maxWidth: 720, margin: "0 auto" }}>
