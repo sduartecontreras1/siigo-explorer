@@ -249,7 +249,7 @@ export default function App() {
                 ["journals", "Comprobantes de diario", "Ajustes, causaciones manuales, cierres", "v1/journals"],
               ].map(([k, label, hint, path]) => (
                 <div key={k}>
-                  <Row label={label} hint={hint} badge={results[k] ? <Badge ok={results[k].ok}/> : null} onQuery={() => consultar(k, path, { page: 0, page_size: 5 })}
+                  <Row label={label} hint={hint} badge={results[k] ? <Badge ok={results[k].ok}/> : null} onQuery={() => consultar(k, path, filtros())}
 loading={loading[k]}/>
                   <Result data={results[k]?.data}/>
                 </div>
