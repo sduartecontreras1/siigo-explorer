@@ -170,11 +170,13 @@ export default function App() {
   }
 
   function filtros() {
-    const p = { page: 0, page_size: 25 };
-    if (fechas.inicio) p.created_start = fechas.inicio;
-    if (fechas.fin) p.created_end = fechas.fin;
-    return p;
-  }
+  return {
+    page: 0,
+    page_size: 25,
+    date_start: fechaInicio,   // 🔴 antes era created_start
+    date_end: fechaFin         // 🔴 antes era created_end
+  };
+}
 
   return (
     <div style={{ minHeight: "100vh", background: C.bgPage, fontFamily: "'Nunito',sans-serif", fontWeight: 300, padding: "0 1rem 4rem" }}>
