@@ -233,7 +233,7 @@ export default function App() {
                 ["doc_types", "Tipos de comprobante", "Lista todos los comprobantes (FV, RCB, CE...)", "v1/document-types", { type: "FV" }],
                 ["users", "Usuarios del sistema", "Usuarios registrados en Siigo", "v1/users", null],
                 ["taxes", "Impuestos configurados", "Retenciones, IVA, ICA", "v1/taxes", null],
-                ["payment_types", "Formas de pago", "Medios de pago disponibles", "v1/payment-types", null],
+                ["payment_types", "Formas de pago", "Medios de pago disponibles", "v1/payment-types", { document_type: "FV" }],
               ].map(([k, label, hint, path, params]) => (
                 <div key={k}>
                   <Row label={label} hint={hint} badge={results[k] ? <Badge ok={results[k].ok}/> : null} onQuery={() => consultar(k, path, params)} loading={loading[k]}/>
