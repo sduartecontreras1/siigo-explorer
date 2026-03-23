@@ -10,8 +10,17 @@ const C = {
 };
 
 async function siigo(method, path, token, body, params) {
+  console.log("DEBUG token recibido:", token);
+  console.log("DEBUG endpoint:", path);
+  console.log("DEBUG body:", body);
+  console.log("DEBUG params:", params);
+
   const p = new URLSearchParams({ endpoint: path, ...(params || {}) }).toString();
-  const res = await fetch(`/api/proxy?${p}`, {
+  const url = `/api/proxy?${p}`;
+
+  console.log("DEBUG url final:", url);
+
+  const res = await fetch(url, {
     method,
     headers: {
       "Content-Type": "application/json",
@@ -19,7 +28,13 @@ async function siigo(method, path, token, body, params) {
     },
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
-  return { ok: res.ok, status: res.status, data: await res.json() };
+
+  const data = await res.json();
+
+  console.log("DEBUG status:", res.status);
+  console.log("DEBUG respuesta completa:", data);
+
+  return { ok: res.ok, status: res.status, data };
 }
 
 function JASLogo() {
@@ -95,33 +110,62 @@ export default function App() {
 
   async function autenticar() {
     if (!creds.username || !creds.access_key) return;
+
+    console.log("DEBUG credenciales enviadas:", {
+      username: creds.username,
+      access_key_viene: !!creds.access_key,
+      access_key_largo: creds.access_key?.length || 0,
+    });
+
     setAuthLoading(true);
     setAuthMsg(null);
+
     try {
-      const r = await siigo("POST", "v1/auth", null, { username: creds.username, access_key: creds.access_key });
+      const r = await siigo("POST", "v1/auth", null, {
+        username: creds.username,
+        access_key: creds.access_key
+      });
+
+      console.log("DEBUG resultado autenticar:", r);
+
       if (r.data?.access_token) {
         setToken(r.data.access_token);
         setAuthMsg({ ok: true, text: "✓ Conexión exitosa. Token válido por 24 horas." });
-        setFechas({ inicio: `${y}-${m}-01`, fin: `${y}-${m}-${new Date(y, now.getMonth()+1, 0).getDate()}` });
+        setFechas({ inicio: `${y}-${m}-01`, fin: `${y}-${m}-${String(new Date(y, now.getMonth() + 1, 0).getDate()).padStart(2, "0")}` });
       } else {
-        const msg = r.data?.Errors?.[0]?.Message || r.data?.message || JSON.stringify(r.data);
+        const msg =
+          r.data?.Errors?.[0]?.Message ||
+          r.data?.message ||
+          r.data?.error ||
+          JSON.stringify(r.data);
+
         setAuthMsg({ ok: false, text: msg });
       }
     } catch (e) {
+      console.log("DEBUG error autenticar catch:", e);
       setAuthMsg({ ok: false, text: e.message });
     }
+
     setAuthLoading(false);
   }
 
   async function consultar(key, path, params) {
-    if (!token) return;
+    if (!token) {
+      console.log("DEBUG consultar cancelado: no hay token");
+      return;
+    }
+
     setLoading(l => ({ ...l, [key]: true }));
+
     try {
       const r = await siigo("GET", path, token, null, params);
+      console.log(`DEBUG resultado consulta ${key}:`, r);
       setResults(prev => ({ ...prev, [key]: r }));
     } catch (e) {
+      console.log(`DEBUG error consulta ${key}:`, e);
       setResults(prev => ({ ...prev, [key]: { ok: false, status: 0, data: { error: e.message } } }));
     }
+
     setLoading(l => ({ ...l, [key]: false }));
   }
 
@@ -146,7 +190,6 @@ export default function App() {
           <strong>Privacidad:</strong> Las credenciales se envían directamente a Siigo a través de un proxy seguro. No se almacenan en ningún lado.
         </div>
 
-        {/* Auth */}
         <Card title="Paso 1 — Autenticación" subtitle="Ingresa tus credenciales de IW" defaultOpen={true}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }}>
             <div>
@@ -158,11 +201,13 @@ export default function App() {
               <input type="password" value={creds.access_key} onChange={e => setCreds(c => ({ ...c, access_key: e.target.value }))} placeholder="Tu access key de Siigo" onKeyDown={e => e.key === "Enter" && autenticar()} style={inputSt}/>
             </div>
           </div>
+
           <button onClick={autenticar} disabled={authLoading || !creds.username || !creds.access_key} style={{ padding: "10px 24px", fontSize: 13, fontWeight: 700, background: C.yellow, color: C.black, border: "none", borderRadius: 8, cursor: "pointer", fontFamily: "'Nunito',sans-serif" }}>
             {authLoading ? "Conectando..." : "Conectar con Siigo"}
           </button>
+
           {authMsg && (
-            <div style={{ marginTop: 10, padding: "10px 14px", background: authMsg.ok ? C.greenBg : C.redBg, border: `1px solid ${authMsg.ok ? C.greenBorder : C.redBorder}`, borderRadius: 8, fontSize: 12, color: authMsg.ok ? C.green : C.red }}>
+            <div style={{ marginTop: 10, padding: "10px 14px", background: authMsg.ok ? C.greenBg : C.redBg, border: `1px solid ${authMsg.ok ? C.greenBorder : C.redBorder}`, borderRadius: 8, fontSize: 12, color: authMsg.ok ? C.green : C.red, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
               {authMsg.text}
             </div>
           )}
@@ -170,7 +215,6 @@ export default function App() {
 
         {token && (
           <>
-            {/* Fechas */}
             <Card title="Parámetros de consulta" subtitle="Filtra por fecha" defaultOpen={true}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <div>
@@ -184,7 +228,6 @@ export default function App() {
               </div>
             </Card>
 
-            {/* Catálogos */}
             <Card title="Catálogos base" subtitle="Configuración del sistema">
               {[
                 ["doc_types", "Tipos de comprobante", "Lista todos los comprobantes (FV, RCB, CE...)", "v1/document-types", null],
@@ -199,7 +242,6 @@ export default function App() {
               ))}
             </Card>
 
-            {/* Facturas */}
             <Card title="Facturas y comprobantes" subtitle="Clave para el checklist">
               {[
                 ["purchases", "Facturas de compra", "Verifica procesamiento del periodo en Siigo", "v1/purchase-invoices"],
@@ -214,7 +256,6 @@ export default function App() {
               ))}
             </Card>
 
-            {/* Nómina y terceros */}
             <Card title="Nómina y terceros">
               {[
                 ["employees", "Empleados", "Lista de empleados registrados", "v1/employees", { page: 0, page_size: 25 }],
@@ -228,7 +269,6 @@ export default function App() {
               ))}
             </Card>
 
-            {/* Resumen */}
             {Object.keys(results).length > 0 && (
               <div style={{ padding: 16, background: C.bgLight, border: `1px solid ${C.border}`, borderRadius: 12, marginTop: 8 }}>
                 <p style={{ fontSize: 13, fontWeight: 700, color: C.black, margin: "0 0 10px" }}>Resumen de consultas</p>
