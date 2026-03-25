@@ -150,25 +150,50 @@ export default function App() {
   }
 
   async function consultar(key, path, params) {
-    if (!token) {
-      console.log("DEBUG consultar cancelado: no hay token");
-      return;
+  if (!token) return;
+  setLoading(l => ({ ...l, [key]: true }));
+  try {
+    let allResults = [];
+    let page = 1;
+    let totalResults = 1;
+
+    while (allResults.length < totalResults) {
+      const p = new URLSearchParams({ 
+        ...params, 
+        page, 
+        page_size: 100 
+      }).toString();
+      
+      const r = await siigo("GET", path, token, null, { 
+        ...params, 
+        page, 
+        page_size: 100 
+      });
+
+      const pageResults = r.data?.results || [];
+      totalResults = r.data?.pagination?.total_results || pageResults.length;
+      allResults = [...allResults, ...pageResults];
+
+      if (pageResults.length < 100) break;
+      page++;
     }
 
-    setLoading(l => ({ ...l, [key]: true }));
-
-    try {
-      const r = await siigo("GET", path, token, null, params);
-      console.log(`DEBUG resultado consulta ${key}:`, r);
-      setResults(prev => ({ ...prev, [key]: r }));
-    } catch (e) {
-      console.log(`DEBUG error consulta ${key}:`, e);
-      setResults(prev => ({ ...prev, [key]: { ok: false, status: 0, data: { error: e.message } } }));
-    }
-
-    setLoading(l => ({ ...l, [key]: false }));
+    setResults(prev => ({ 
+      ...prev, 
+      [key]: { 
+        ok: true, 
+        status: 200, 
+        data: { 
+          pagination: { total_results: allResults.length },
+          results: allResults 
+        } 
+      } 
+    }));
+  } catch (e) {
+    setResults(prev => ({ ...prev, [key]: { ok: false, status: 0, data: { error: e.message } } }));
   }
-
+  setLoading(l => ({ ...l, [key]: false }));
+}
   function filtros() {
   const p = { page: 1, page_size: 25 };
   if (fechas.inicio) p.created_start = fechas.inicio;
