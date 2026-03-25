@@ -170,7 +170,7 @@ export default function App() {
   }
 
   function filtros() {
-  const p = { page: 0, page_size: 25 };
+  const p = { page: 1, page_size: 25 };
   if (fechas.inicio) p.created_start = fechas.inicio;
   if (fechas.fin) p.created_end = fechas.fin;
   return p;
@@ -251,10 +251,10 @@ export default function App() {
                 <div key={k}>
                   <Row label={label} hint={hint} badge={results[k] ? <Badge ok={results[k].ok}/> : null} onQuery={() => consultar(k, path,
   k === "invoices"
-    ? { page: 0, page_size: 25, date_start: fechas.inicio, date_end: fechas.fin }
+    ? { page: 1, page_size: 25, date_start: fechas.inicio, date_end: fechas.fin }
     : k === "journals"
-    ? { page: 0, page_size: 25 }
-    : { page: 0, page_size: 25, created_start: fechas.inicio, created_end: fechas.fin }
+    ? { page: 1, page_size: 25 }
+    : { page: 1, page_size: 25, created_start: fechas.inicio, created_end: fechas.fin }
 )}
 loading={loading[k]}/>
                   <Result data={results[k]?.data}/>
